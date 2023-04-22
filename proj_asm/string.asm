@@ -5,58 +5,49 @@ section .text
         push ebp
         mov ebp,esp
         push edi
-        push esi
         mov edi,dword[ebp+8];адрес строки
-        mov esi,dword[ebp+12];адрес выходной строки
-        mov ecx,dword[ebp+16];размер строки
-        .cycle:
-            cmp byte[edi+ecx-1],'A'
+        mov ecx,dword[ebp+12];размер строки
+        .cycle:;если заглавная буква - прибавляем 32 к коду буквы (*код заглавной*+32=*код соотв. строчной*)
+            cmp dword[edi+4*ecx-4],'A'
             jb .next
-            cmp byte[edi+ecx-1],'Z'
+            cmp dword[edi+4*ecx-4],'Z'
             ja .next
-            mov al,byte[edi+ecx-1]
-            add al,32
-            mov byte[esi+ecx-1],al
-            jmp .all_next
+            add dword[edi+4*ecx-4],32
             .next:
-                mov al,byte[edi+ecx-1]
-                mov byte[esi+ecx-1],al
-                .all_next:
-                    loop .cycle
-        pop esi
+                loop .cycle
         pop edi
         leave
         ret
+
+
     secondrule:
         push ebp
         mov ebp,esp
         push edi
         mov edi,dword[ebp+8]
-        mov dl,byte[edi]
-        push esi
-        mov esi,dword[ebp+12]
-        mov byte[esi],dl
+        mov ecx,dword[ebp+12]
+        mov edx,dword[edi]
         push ebx
-        mov ebx,1; текущая длина выходного массива
-        mov ecx,dword[ebp+16]
-        mov ecx,dword[ecx]
-        mov eax,1
-        dec ecx
-        .cycle:
-            cmp byte[edi+eax],dl
+        mov ebx,1
+        .cycle:;в обратном порядке заносим в стек все элементы, не равные первому
+            cmp edx,dword[edi+4*ecx-4]
             je .next
-            push ecx
-            mov cl,byte[edi+eax]
-            mov byte[esi+ebx],cl
-            pop ecx
+            push dword[edi+4*ecx-4]
             inc ebx
             .next:
-                inc eax
                 loop .cycle
-        mov eax,dword[ebp+16]
-        mov dword[eax],ebx
+        mov ecx,dword[ebp+12]
+        push edx
+        .zeros:;обнуляем все значения строки
+            mov dword[edi+4*ecx-4],0
+            loop .zeros
+        mov ecx,ebx
+        mov ebx,0
+        .ans:;занесение данных из стека в строку
+            pop dword[edi+4*ebx]
+            inc ebx
+            loop .ans
         pop ebx
-        pop esi
         pop edi
         leave
         ret
