@@ -1,0 +1,1 @@
+void firstrule(char s[],int n);
