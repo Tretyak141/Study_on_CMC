@@ -43,12 +43,12 @@ int main()
     int s[N];
     printf("Введите входную строку\n");
     input_string(s,&a);
-    printf("Входная строка имеет следующий вид: ");
+    printf("Входная строка имеет следующий вид: \n");
     output_string(s,a);
     printf("Правило обработки: %d\n",check(s,a));
     if (check(s,a)==1) firstrule(s,a);//если строка требуемого формата - выполняется первое правило (правило 1.5)
     else secondrule(s,a);//иначе - второе (правило 1.4)
-    printf("\n\nПреобразованная строка: ");
+    printf("\nПреобразованная строка: ");
     output_string(s,a);
     return 0;
 }

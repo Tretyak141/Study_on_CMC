@@ -1,7 +1,7 @@
 section .text
     global firstrule
     global secondrule
-    firstrule:
+    first_rule:
         push ebp
         mov ebp,esp
         push edi
