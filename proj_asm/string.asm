@@ -1,24 +1,23 @@
 section .text
     global firstrule
     global secondrule
-    first_rule:
+    firstrule:
         push ebp
         mov ebp,esp
         push edi
         mov edi,dword[ebp+8];адрес строки
         mov ecx,dword[ebp+12];размер строки
         .cycle:;если заглавная буква - прибавляем 32 к коду буквы (*код заглавной*+32=*код соотв. строчной*)
-            cmp dword[edi+4*ecx-4],'A'
+            cmp byte[edi+ecx-1],'A'
             jb .next
-            cmp dword[edi+4*ecx-4],'Z'
+            cmp byte[edi+ecx-1],'Z'
             ja .next
-            add dword[edi+4*ecx-4],32
+            add byte[edi+ecx-1],32
             .next:
                 loop .cycle
         pop edi
         leave
         ret
-
 
     secondrule:
         push ebp
@@ -26,25 +25,27 @@ section .text
         push edi
         mov edi,dword[ebp+8]
         mov ecx,dword[ebp+12]
-        mov edx,dword[edi]
+        movzx edx,byte[edi]
         push ebx
         mov ebx,1
         .cycle:;в обратном порядке заносим в стек все элементы, не равные первому
-            cmp edx,dword[edi+4*ecx-4]
+            cmp dl,byte[edi+ecx-1]
             je .next
-            push dword[edi+4*ecx-4]
+            movzx eax,byte[edi+ecx-1]
+            push eax
             inc ebx
             .next:
                 loop .cycle
         mov ecx,dword[ebp+12]
         push edx
         .zeros:;обнуляем все значения строки
-            mov dword[edi+4*ecx-4],0
+            mov byte[edi+ecx-1],0
             loop .zeros
         mov ecx,ebx
         mov ebx,0
         .ans:;занесение данных из стека в строку
-            pop dword[edi+4*ebx]
+            pop eax
+            mov byte[edi+ebx],al
             inc ebx
             loop .ans
         pop ebx

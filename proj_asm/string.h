@@ -1,2 +1,2 @@
-void firstrule(int s[],int n);
-void secondrule(int s1[],int n);
+void firstrule(char s[],int n);
+void secondrule(char s[],int n);
